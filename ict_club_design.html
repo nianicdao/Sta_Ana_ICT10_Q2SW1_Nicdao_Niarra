@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Bakery Club</title>
+
+    <!-- Bootstrap for design -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Handwritten font -->
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- PyScript -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.8.2/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.8.2/core.js"></script>
+
+    <style>
+        :root {
+            --cream: #fdecc8;
+            --red: #c0392b;
+            --brown: #3b1f14;
+        }
+
+        body {
+            font-family: "Gaegu", cursive;
+            font-size: 1.2rem;
+            color: var(--brown);
+            min-height: 100vh;
+            background-color: #f6f5f1;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='6'><rect width='25' height='6' fill='%23dce6f3'/><rect x='25' width='25' height='6' fill='%23f6f5f1'/><rect x='24' width='1.5' height='3' fill='%234a3b36'/><rect x='48.5' width='1.5' height='3' fill='%234a3b36'/></svg>");
+        }
+
+        .top-bar {
+            background-color: var(--cream);
+            padding: 14px 24px;
+        }
+
+        .logo {
+            color: var(--red);
+            font-weight: 700;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .red-border {
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--red) 0px,
+                var(--red) 8px,
+                transparent 8px,
+                transparent 16px
+            );
+        }
+
+        .card-box {
+            background-color: var(--cream);
+            max-width: 460px;
+            padding: 30px;
+            margin: 50px auto;
+        }
+
+        .card-box h2 {
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .line-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--brown);
+            border-radius: 0;
+            font-family: "Gaegu", cursive;
+            font-size: 1.2rem;
+            margin-bottom: 14px;
+        }
+
+        .line-input:focus {
+            background: transparent;
+            box-shadow: none;
+            border-bottom-color: var(--red);
+        }
+
+        .join-btn {
+            display: block;
+            margin: 10px auto 20px auto;
+            background: transparent;
+            border: 2px solid var(--brown);
+            border-radius: 8px;
+            padding: 2px 22px;
+            font-family: "Gaegu", cursive;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--brown);
+        }
+
+        .join-btn:hover {
+            background-color: var(--red);
+            border-color: var(--red);
+            color: var(--cream);
+        }
+
+        #output {
+            text-align: center;
+            font-weight: 700;
+            animation: pop 0.3s ease-out;
+        }
+
+        @keyframes pop {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top bar -->
+    <div class="top-bar">
+        <h1 class="logo">the bakery club</h1>
+    </div>
+    <div class="red-border"></div>
+
+    <!-- Card -->
+    <div class="card-box">
+        <h2>join the club!</h2>
+
+        <!-- Two text boxes -->
+        <input type="text" id="first_name" class="form-control line-input" placeholder="first name">
+        <input type="text" id="last_name" class="form-control line-input" placeholder="last name">
+
+        <!-- Button -->
+        <button class="join-btn" type="button" py-click="check_member">check</button>
+
+        <!-- Result area -->
+        <div id="output"></div>
+    </div>
+
+    <script type="py">
+        # ============================================================
+        # HOW THIS PROGRAM WORKS (super simple):
+        # 1. We make a list of club members.
+        # 2. When you press the button, we get the first and last name.
+        # 3. We join them into one full name.
+        # 4. We check if the full name is in the list (True or False).
+        # 5. We show the right message. (No if/else, no loops!)
+        # ============================================================
+
+        from pyscript import document
+
+        # STEP 1: The list of club members (all lowercase on purpose)
+        members = [
+            "xyrinne nuesca",
+            "oslyn donato",
+            "francesca ariola",
+            "andreanna bautista",
+            "ayanokoji kiyotaka",
+            "jhanella palomares",
+            "yohannah bacoy",
+            "ryoni guilas",
+        ]
+
+        # The two messages. True = on the list, False = not on the list.
+        # {name} is a blank space that we fill in later.
+        messages = {
+            True: "Congratulations {name}! You are now part of the ICT club.",
+            False: "Sorry {name}, your name is not on the list.",
+        }
+
+
+        # This runs when the button is clicked
+        def check_member(event):
+            # STEP 2: Get what the person typed
+            first = document.querySelector("#first_name").value
+            last = document.querySelector("#last_name").value
+
+            # STEP 3: Combine into one full name
+            full_name = first.strip() + " " + last.strip()
+
+            # STEP 4: lower() makes it all small letters, so capitals don't matter.
+            # "in" gives True or False. We save it in a variable called "result".
+            result = full_name.lower() in members
+
+            # STEP 5: Pick the message using the result (True or False).
+            # title() makes the first letter of each word big for the message.
+            message = messages[result].format(name=full_name.title())
+
+            # Show it in the result area
+            document.querySelector("#output").innerText = message
+    </script>
+</body>
+</html>
